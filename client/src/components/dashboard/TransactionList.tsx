@@ -42,6 +42,7 @@ export default function TransactionsPage() {
       setTransactions(data);
       setTotal(totalCount);
       setError(null);
+      setLoading(false);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

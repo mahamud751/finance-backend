@@ -1,6 +1,6 @@
 import { UpdateTransactionDto } from "@/utils/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8093/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8095/v1";
 
 export async function getSummary() {
   const response = await fetch(`${BASE_URL}/summary`, {
