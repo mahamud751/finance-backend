@@ -1,3 +1,5 @@
+import { UpdateTransactionDto } from "@/utils/types";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8093/v1";
 
 export async function getSummary() {
@@ -41,7 +43,7 @@ export async function getTransactions({
   return response.json();
 }
 
-export async function createTransaction(data: any) {
+export async function createTransaction(data: UpdateTransactionDto) {
   const response = await fetch(`${BASE_URL}/transactions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -54,7 +56,10 @@ export async function createTransaction(data: any) {
   return response.json();
 }
 
-export async function apiUpdateTransaction(id: string, data: any) {
+export async function apiUpdateTransaction(
+  id: string,
+  data: UpdateTransactionDto
+) {
   const response = await fetch(`${BASE_URL}/transactions/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },

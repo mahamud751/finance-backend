@@ -59,8 +59,12 @@ export default function TransactionEdit() {
           date: transaction.date,
         });
         setLoading(false);
-      } catch (err: any) {
-        setError(err.message || "Failed to load transaction");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Failed to load transaction");
+        }
         setLoading(false);
       }
     }
@@ -76,11 +80,13 @@ export default function TransactionEdit() {
       setSuccess("Transaction updated successfully!");
       setErrors({ description: "", amount: "", category: "", date: "" });
       setTimeout(() => router.push("/transactions"), 1000);
-    } catch (err: any) {
-      setErrors({
-        ...errors,
-        amount: err.message || "Failed to update transaction",
-      });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to load transaction");
+      }
+      setLoading(false);
     }
   };
 

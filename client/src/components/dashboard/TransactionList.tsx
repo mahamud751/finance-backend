@@ -42,9 +42,12 @@ export default function TransactionsPage() {
       setTransactions(data);
       setTotal(totalCount);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Failed to load transactions");
-    } finally {
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to load transaction");
+      }
       setLoading(false);
     }
   };
@@ -57,8 +60,13 @@ export default function TransactionsPage() {
     try {
       await apiDeleteTransaction(id);
       fetchData(page);
-    } catch (err: any) {
-      setError(err.message || "Failed to delete transaction");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to load transaction");
+      }
+      setLoading(false);
     }
   };
 
@@ -71,7 +79,7 @@ export default function TransactionsPage() {
   ) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
-    setPage(1); // Reset to page 1 on filter change
+    setPage(1);
   };
 
   const handleClearFilters = () => {

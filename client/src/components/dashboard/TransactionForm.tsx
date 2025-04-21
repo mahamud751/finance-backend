@@ -52,11 +52,18 @@ export default function AddTransactionPage() {
       setSuccess("Transaction added successfully!");
       setErrors({ description: "", amount: "", category: "", date: "" });
       setTimeout(() => router.push("/transactions"), 1000);
-    } catch (err: any) {
-      setErrors({
-        ...errors,
-        amount: err.message || "Failed to add transaction",
-      });
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrors({
+          ...errors,
+          amount: err.message || "Failed to add transaction",
+        });
+      } else {
+        setErrors({
+          ...errors,
+          amount: "Failed to add transaction",
+        });
+      }
     }
   };
 

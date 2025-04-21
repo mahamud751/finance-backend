@@ -12,14 +12,18 @@ export default function DashboardPage() {
 
   const [summary, setSummary] = useState<Summary | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [mounted] = useState(false);
   useEffect(() => {
     async function loadSummary() {
       try {
         const data = await getSummary();
         setSummary(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to load summary");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Failed to load summary");
+        }
       }
     }
     loadSummary();
