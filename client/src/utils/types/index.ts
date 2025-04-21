@@ -1,3 +1,9 @@
+export interface Summary {
+  totalIncome: number;
+  totalExpenses: number;
+  balance: number;
+}
+
 export interface Transaction {
   id: string;
   description: string;
@@ -8,8 +14,16 @@ export interface Transaction {
   updatedAt: string;
 }
 
-export interface Summary {
-  totalIncome: number;
-  totalExpenses: number;
-  balance: number;
+export interface CreateTransactionDto {
+  description: string;
+  amount: number;
+  category: string;
+  date: string;
+}
+
+export interface UpdateTransactionDto {
+  description: string;
+  amount: number;
+  category: string;
+  date: string;
 }

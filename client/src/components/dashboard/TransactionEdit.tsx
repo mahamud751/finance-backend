@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
-import { createTransaction } from "@/lib/api";
-import { CreateTransactionDto } from "@/utils/types";
+import { getTransactions, apiUpdateTransaction } from "@/lib/api";
+import { Transaction, UpdateTransactionDto } from "@/utils/types";
 
-export default function AddTransactionPage() {
+export default function TransactionEdit() {
+  const { id } = useParams();
   const router = useRouter();
-  const [form, setForm] = useState<CreateTransactionDto>({
+  const [form, setForm] = useState<UpdateTransactionDto>({
     description: "",
     amount: 0,
     category: "",
-    date: new Date().toISOString().split("T")[0],
+    date: "",
   });
   const [errors, setErrors] = useState({
     description: "",
@@ -22,6 +23,8 @@ export default function AddTransactionPage() {
     date: "",
   });
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const categories = [
     "Food",
@@ -43,19 +46,40 @@ export default function AddTransactionPage() {
     return Object.values(newErrors).every((e) => !e);
   };
 
+  useEffect(() => {
+    async function loadTransaction() {
+      try {
+        const { data } = await getTransactions({ page: 1, limit: 10 });
+        const transaction = data.find((t: Transaction) => t.id === id);
+        if (!transaction) throw new Error("Transaction not found");
+        setForm({
+          description: transaction.description,
+          amount: transaction.amount,
+          category: transaction.category,
+          date: transaction.date,
+        });
+        setLoading(false);
+      } catch (err: any) {
+        setError(err.message || "Failed to load transaction");
+        setLoading(false);
+      }
+    }
+    loadTransaction();
+  }, [id]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     try {
-      await createTransaction(form);
-      setSuccess("Transaction added successfully!");
+      await apiUpdateTransaction(id as string, form);
+      setSuccess("Transaction updated successfully!");
       setErrors({ description: "", amount: "", category: "", date: "" });
       setTimeout(() => router.push("/transactions"), 1000);
     } catch (err: any) {
       setErrors({
         ...errors,
-        amount: err.message || "Failed to add transaction",
+        amount: err.message || "Failed to update transaction",
       });
     }
   };
@@ -70,9 +94,12 @@ export default function AddTransactionPage() {
     }));
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error && !success) return <div className="text-red-500">{error}</div>;
+
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow max-w-md mx-auto text-white">
-      <h1 className="text-2xl font-bold mb-4">Add Transaction</h1>
+    <div className="bg-white text-white dark:bg-gray-800 p-4 rounded-lg shadow max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Edit Transaction</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium">Description</label>

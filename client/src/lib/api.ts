@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8093/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8093/v1";
 
 export async function getSummary() {
   const response = await fetch(`${BASE_URL}/summary`, {
